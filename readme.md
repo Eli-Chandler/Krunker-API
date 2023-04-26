@@ -1,3 +1,5 @@
+You can sign up for capsolver here, this is what we use to solve the hcaptcha challenge: https://dashboard.capsolver.com/passport/register?inviteCode=hnpifE3ejpcE
+
 ## Usage example:
 
 To find unused usernames:
