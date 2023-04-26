@@ -7,9 +7,12 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 class KrunkerWebSocket:
-    def __init__(self, capsolver_api_key):
+    def __init__(self, capsolver_api_key=None):
         self.is_ready = False
-        self.solver = AsyncCapSolver(capsolver_api_key)
+        if capsolver_api_key is not None:
+            self.solver = AsyncCapSolver(capsolver_api_key)
+        else:
+            self.solver = None
         self.response_events = {
             'profile': {}
         }
@@ -63,11 +66,14 @@ class KrunkerWebSocket:
 
     async def handle_cpt(self, message):
         self.is_ready = False
-        logging.info('Solving captcha')
-        solution = await self.solver.solve_hcaptcha('https://krunker.io/', '60a46f6a-e214-4aa8-b4df-4386e68dfde4')
-        logging.info('Solved captcha: %s', solution)
-        await self.send_system_message(['cptR', solution['gRecaptchaResponse']])
-        self.is_ready = True
+        if self.solver is not None:
+            logging.info('Solving captcha')
+            solution = await self.solver.solve_hcaptcha('https://krunker.io/', '60a46f6a-e214-4aa8-b4df-4386e68dfde4')
+            logging.info('Solved captcha: %s', solution)
+            await self.send_system_message(['cptR', solution['gRecaptchaResponse']])
+            self.is_ready = True
+        else:
+            raise Exception('No captcha solver provided')
 
     async def handle_pi(self, message):
         await self.send_system_message(['po'])
@@ -123,6 +129,7 @@ async def main():
     capsolver_api_key = os.environ.get('CAPSOLVER_API_KEY')
     kws = KrunkerWebSocket(capsolver_api_key)
     await kws.start()
+    await kws.request_profile('Kpal81')
 
 if __name__ == '__main__':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
