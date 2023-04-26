@@ -5,7 +5,7 @@ from aiocapsolver.capsolver import AsyncCapSolver
 import os
 import logging
 
-logging.basicConfig(level=logging.INFO)
+
 class KrunkerWebSocket:
     def __init__(self, capsolver_api_key=None):
         self.is_ready = False
@@ -126,12 +126,17 @@ class KrunkerWebSocket:
 
 
 async def main():
+    usernames_to_check = ['sfkjadhsfalskas123', '.Floow', 'Sidney']
     capsolver_api_key = os.environ.get('CAPSOLVER_API_KEY')
     kws = KrunkerWebSocket(capsolver_api_key)
     await kws.start()
-    await kws.request_profile('Kpal81')
+    for username in usernames_to_check:
+        response = await kws.request_profile(username)
+        if not response:
+            print(username, 'is available!')
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
 
