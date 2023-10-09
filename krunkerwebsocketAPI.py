@@ -68,7 +68,11 @@ class KrunkerWebSocket:
         self.is_ready = False
         if self.solver is not None:
             logging.info('Solving captcha')
-            solution = await self.solver.solve_hcaptcha('https://krunker.io/', '60a46f6a-e214-4aa8-b4df-4386e68dfde4')
+            try:
+                solution = await self.solver.solve_hcaptcha('https://krunker.io/', '60a46f6a-e214-4aa8-b4df-4386e68dfde4', method='HCaptchaTaskProxyLess')
+            except Exception as e:
+                logging.error('Failed to solve captcha: %s', e)
+                raise e
             logging.info('Solved captcha: %s', solution)
             await self.send_system_message(['cptR', solution['gRecaptchaResponse']])
             self.is_ready = True
@@ -128,6 +132,7 @@ class KrunkerWebSocket:
 async def main():
     usernames_to_check = ['sfkjadhsfalskas123', '.Floow', 'Sidney']
     capsolver_api_key = os.environ.get('CAPSOLVER_API_KEY')
+
     kws = KrunkerWebSocket(capsolver_api_key)
     await kws.start()
     for username in usernames_to_check:
@@ -137,6 +142,5 @@ async def main():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
 
