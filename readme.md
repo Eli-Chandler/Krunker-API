@@ -1,3 +1,7 @@
+# Note: I made this as a proof of concept, if you want to contribute please see my newer version which is much better designed: https://github.com/Eli-Chandler/KrunkerAPIV2
+
+
+
 You can sign up for capsolver here, this is what we use to solve the hcaptcha challenge: https://dashboard.capsolver.com/passport/register?inviteCode=hnpifE3ejpcE
 
 ## Usage example:
